@@ -73,7 +73,16 @@ export function drawFaceBox(ctx, [cx, cy, side]) {
  * "yes  " with the cursor sitting just before "no".
  */
 export class Typewriter {
-  constructor(old, next, start) {
+  /** `timing` overrides any of { startDelay, backspace, pause, type, endHold } (seconds). */
+  constructor(old, next, start, timing = {}) {
+    const tm = {
+      startDelay: config.TYPE_START_DELAY,
+      backspace: config.BACKSPACE_INTERVAL,
+      pause: config.TYPE_PAUSE,
+      type: config.TYPE_INTERVAL,
+      endHold: config.TYPE_END_HOLD,
+      ...timing,
+    };
     this.start = start;
     const n = Math.min(old.length, next.length);
     let p = 0;
@@ -92,22 +101,22 @@ export class Typewriter {
 
     // Keyframes: [time offset, text, cursor index].
     this.frames = [[0, old, p + core.length]];
-    let t = config.TYPE_START_DELAY;
+    let t = tm.startDelay;
     for (let k = 1; k <= core.length; k++) {
       const kept = core.slice(0, core.length - k);
       this.frames.push([t, head + kept + spaces + tail, p + kept.length]);
-      t += config.BACKSPACE_INTERVAL;
+      t += tm.backspace;
     }
     for (let k = 1; k <= spaces.length; k++) {
       this.frames.push([t, head + spaces.slice(k) + tail, p]);
-      t += config.BACKSPACE_INTERVAL;
+      t += tm.backspace;
     }
-    if (oldMid && newMid) t += config.TYPE_PAUSE - config.BACKSPACE_INTERVAL;
+    if (oldMid && newMid) t += tm.pause - tm.backspace;
     for (let k = 1; k <= newMid.length; k++) {
       this.frames.push([t, head + newMid.slice(0, k) + tail, p + k]);
-      t += config.TYPE_INTERVAL;
+      t += tm.type;
     }
-    this.duration = this.frames[this.frames.length - 1][0] + config.TYPE_END_HOLD;
+    this.duration = this.frames[this.frames.length - 1][0] + tm.endHold;
   }
 
   /** [text, cursorIndex] at time `now`. */
