@@ -5,7 +5,7 @@ lingers and answers for you in typewriter text: "yes:(". After that it
 rewrites your body as a stream of letters that reads "its your fault" over
 and over.
 
-**Live:** https://YOUR-USERNAME.github.io/are-you-human/ <!-- replace once GitHub Pages is on -->
+**Live:** https://ciiphersiren.github.io/are-you-human/ <!-- replace once GitHub Pages is on -->
 
 Everything runs in your browser: face detection and body segmentation use
 [MediaPipe](https://ai.google.dev/edge/mediapipe) on your own device. No video
