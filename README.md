@@ -1,62 +1,128 @@
+<div align="center">
+
 # are you human?
 
-A small webcam toy. It finds your face and asks "are you human?", then
-lingers and answers for you in typewriter text: "yes:(". After that it
-rewrites your body as a stream of letters that reads "its your fault" over
-and over.
+**a webcam that asks you a question, then answers it for you.**
 
-**Live:** https://ciiphersiren.github.io/are-you-human/ <!-- replace once GitHub Pages is on -->
+[**→ try it**](https://ciiphersiren.github.io/are-you-human/) &nbsp;·&nbsp;
+[**→ what are you made of?**](https://ciiphersiren.github.io/are-you-human/made-of/)
 
-Everything runs in your browser: face detection and body segmentation use
-[MediaPipe](https://ai.google.dev/edge/mediapipe) on your own device. No video
-is uploaded anywhere.
+<!-- demo gif goes here:
+<img src="docs/demo.gif" alt="a face is boxed, 'are you human? yes no' appears, 'no' is deleted, and the body dissolves into the words 'its your fault'" width="640">
+-->
 
-## Controls
+*runs entirely in your browser. no video ever leaves your device.*
 
-| Key | Button | Does |
-|-----|--------|------|
-| `n` | not human | say "no" instead: "yes" gets deleted, and every person fades out of the video |
-| `r` | reset | start the sequence over |
-| `f` | | show/hide FPS |
-| `d` | | debug view: show the body mask |
-| `q` | | turn the camera off |
+</div>
 
-## Run locally
+---
 
-It's a static site with no build step, but ES modules don't load from
-`file://`, so serve the folder:
+You sit down. A box finds your face.
 
-```sh
-python -m http.server 8000
-# open http://localhost:8000
+```
+are you human?  yes  no
 ```
 
-Browsers only allow camera access on `https://` or `localhost`.
+It waits. Eight seconds is a long time to be looked at.
 
-## Host on GitHub Pages
+Then, one keystroke at a time, it deletes **no** and types its answer for you:
 
-1. Push this repo to GitHub.
-2. In **Settings → Pages**, set the source to **Deploy from a branch**, then
-   pick your branch and the `/ (root)` folder.
-3. Put the resulting URL in the **Live** link above.
+```
+are you human?  yes:(
+```
 
-All paths are relative, so it works under `https://<user>.github.io/<repo>/`.
+…and your body comes apart into text, rippling out from your face. Every
+part of you that the camera can see is rewritten as one sentence, repeated,
+flowing unbroken through the shape of you:
 
-## Tweaking
+```
+                 its your fau
+              lt its your fault
+             its your fault its
+          your fault its your fault
+       its your fault its your fault it
+```
 
-Everything tunable is in [`config.js`](config.js): the phrase (`PHRASE`), how
-long the question lingers (`QUESTION_LINGER_SECONDS`), typing speed, letter
-grid size, colors, `"dark"` or `"video"` background, and the MediaPipe
-delegate (`"CPU"` by default, `"GPU"` optional).
+The letters take their color from you: your skin, your shirt, the light on
+your face. Move, and the sentence moves with you.
 
-## Python version
+## two ways in
 
-The original desktop version (OpenCV window) is in [`python/`](python/), kept
-for reference:
+### [are you human?](https://ciiphersiren.github.io/are-you-human/)
+
+The original. It asks, it decides, and it's your fault.
+
+Disagree? Press **not human**. It deletes "yes" instead, and then
+you're gone. Not lettered, gone: every person in the frame fades out of
+the video, and the room behind them takes their place. The question stays,
+floating where your head was.
+
+### [what are you made of?](https://ciiphersiren.github.io/are-you-human/made-of/)
+
+This one asks first. Type your answer (*stardust*, *guilt*, *my mother's
+hands*, *चाय*, *🌊*) and then become it. Any language, any script, emoji too.
+
+Every answer gets its own link, so you can send someone what you're made of:
+
+```
+ciiphersiren.github.io/are-you-human/made-of/?text=stardust
+```
+
+## controls
+
+| | | |
+|:-:|---|---|
+| **n** | *not human* | refuse the answer, and disappear |
+| **r** | *reset* | start over (on *made of*: a new person, a new answer) |
+| | *share* | copy a link to your answer (*made of*) |
+| **d** | | see what the machine sees: the body mask |
+| **f** | | frames per second |
+| **q** | | turn the camera off |
+
+On a phone, the buttons under the video do the same.
+
+## how it works
+
+Everything happens on your device, live, about 20 to 50 times a second.
+
+- **Finding you.** Google's [MediaPipe](https://ai.google.dev/edge/mediapipe)
+  runs two small neural networks in the browser via WebAssembly: one finds
+  faces, the other draws an outline of every person in view.
+- **Becoming text.** The frame is cut into a grid of about 80 × 36 cells.
+  Any cell that's mostly *you* gets a character, read left to right, top to
+  bottom, skipping everything that isn't you, so the sentence flows through
+  your silhouette like water through a mold. Each glyph is pre-drawn once,
+  then stamped and tinted on the GPU, thousands per frame.
+- **Disappearing.** While you sit there, the app quietly memorizes the room
+  behind you, pixel by pixel, from every part of the frame you're not
+  covering. When you choose *not human*, it paints that memory back over you.
+  Anywhere it never got to see, it fills with a smear of the surroundings.
+- **Speaking any language.** Text is split into what you'd call characters
+  ("कि", "క్ష", "👩‍🚀"), not raw code points, so every script lands one
+  glyph per cell, each one measured and fitted so nothing overlaps.
+
+No server, no uploads, no analytics, no build step. It's a handful of
+JavaScript files and a canvas.
+
+## running it yourself
 
 ```sh
-cd python
-pip install -r requirements.txt
-python scripts/download_models.py
-python main.py
+git clone https://github.com/ciiphersiren/are-you-human.git
+cd are-you-human
+python -m http.server 8000     # any static server works
 ```
+
+Then open <http://localhost:8000>. Cameras only work on `https://` or
+`localhost`, and modules don't load from `file://`, so a local server is needed.
+
+Want it to say something else? Everything is in [`config.js`](config.js):
+the sentence (`PHRASE`), how long it stares at you
+(`QUESTION_LINGER_SECONDS`), typing speed, grid size, colors, and more.
+
+There's also the original desktop prototype in [`python/`](python/)
+(OpenCV + MediaPipe), kept for reference.
+
+<div align="center">
+<br>
+<sub>made with a webcam, a typewriter font, and some unresolved feelings.</sub>
+</div>
