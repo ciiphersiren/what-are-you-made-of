@@ -108,6 +108,13 @@ export const LETTER_COLOR_GAIN = 1.3;   // brighten cell colors so dark clothes 
 export const LETTER_BACKGROUND = "dark"; // "dark" or "video" (dimmed video behind letters)
 export const LETTER_VIDEO_DIM = 0.35;
 
+// --- "made of" version (made-of/) ---
+export const MADE_OF_QUESTION = "what are you made up of?";
+export const MADE_OF_EMPTY_REPLY = "hm. you have to be made of something.";
+export const MADE_OF_MAX_LENGTH = 60;       // in graphemes (user-perceived characters)
+export const MADE_OF_URL_PARAM = "text";    // made-of/?text=stardust skips the question
+export const MADE_OF_TYPE_INTERVAL = 0.06;  // prompt typing speed (s per character)
+
 // --- Ripple-in transition when entering LETTERED ---
 export const REVEAL_SECONDS = 0.8;
 export const REVEAL_EDGE = 90; // px width of the soft wavefront edge
