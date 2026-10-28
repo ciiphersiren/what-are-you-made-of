@@ -1,8 +1,10 @@
 :root {
   --bg: #0b0b0b;
   --fg: #f2f2f2;
-  --muted: #9a9a9a;
-  --error: #ff8a80;
+  --muted: #8a8a8a;
+  --faint: #5a5a5a;    /* footer note + links */
+  --ghost: #d4d4d4;    /* glowing headline */
+  --error: #e08a84;
   --type: "Special Elite", "Courier New", monospace;
   --controls-h: 7.5rem; /* room kept below the canvas for buttons + key hint */
   color-scheme: dark;
@@ -24,33 +26,99 @@ main {
   min-height: 100vh;
   min-height: 100dvh;
   display: grid;
+  grid-template-rows: 1fr;
   place-items: center;
   padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
            max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
 }
 
-/* --- start screen --- */
+/* --- start screens: centered content, note + link pinned to the bottom --- */
 
 .start {
-  max-width: 40rem;
+  align-self: stretch;
+  width: 100%;
+  max-width: 56rem;
+  display: flex;
+  flex-direction: column;
   text-align: center;
+}
+
+/* Dim vignette + faint drifting film grain, only behind the start screens. */
+.start::before,
+.start::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.start::before {
+  inset: 0;
+  background: radial-gradient(ellipse 110% 85% at 50% 42%, #161616 0%, #090909 55%, #000 100%);
+}
+
+.start::after {
+  inset: -20%;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(4) infinite;
+}
+
+@keyframes grain {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-4%, 3%); }
+  50%  { transform: translate(3%, -5%); }
+  75%  { transform: translate(-2%, -2%); }
+  100% { transform: translate(0, 0); }
+}
+
+.start-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding-top: 2rem;
 }
 
 .start h1 {
   font-family: var(--type);
   font-weight: normal;
-  font-size: clamp(2.2rem, 10vw, 3.8rem);
-  margin: 0 0 1.5rem;
+  font-size: clamp(2rem, 7vw, 3.4rem);
+  letter-spacing: 0.02em;
+  text-wrap: balance; /* "what are you / made up of?", never a lone "of?" */
+  color: var(--ghost);
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.35), 0 0 22px rgba(255, 255, 255, 0.14);
+  margin: 0 0 2.25rem;
+  animation: flicker 7s infinite;
+}
+
+/* Mostly steady, with the odd stutter, like a failing bulb. */
+@keyframes flicker {
+  0%, 90%, 92.5%, 95.5%, 100% { opacity: 1; }
+  91%   { opacity: 0.55; }
+  94.5% { opacity: 0.8; }
 }
 
 .note {
-  color: var(--muted);
-  margin: 1.25rem 0 0;
+  color: var(--faint);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  margin: 0;
 }
 
 .status {
   min-height: 1.5em;
-  margin: 1rem 0 0;
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+  font-family: var(--type);
 }
 
 .status.error { color: var(--error); }
@@ -62,23 +130,46 @@ button {
   font-size: 1.05rem;
   color: var(--fg);
   background: transparent;
-  border: 2px solid var(--fg);
+  border: 1px solid rgba(242, 242, 242, 0.55);
   padding: 0.6em 1.2em;
   min-height: 44px; /* comfortable tap target */
   cursor: pointer;
   touch-action: manipulation;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 button:hover:not(:disabled),
 button:focus-visible {
-  background: var(--fg);
-  color: var(--bg);
+  border-color: var(--fg);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
   outline: none;
 }
 
-button:disabled { opacity: 0.5; cursor: wait; }
+button:disabled { opacity: 0.4; cursor: wait; }
 
-button.primary { font-size: 1.3rem; padding: 0.75em 1.6em; }
+button.primary { font-size: 1.2rem; padding: 0.75em 1.6em; letter-spacing: 0.04em; }
+
+/* Text-only button ("go"). */
+button.ghost {
+  border: none;
+  color: var(--muted);
+  font-size: 1.3rem;
+  letter-spacing: 0.12em;
+  padding: 0.3em 0.6em;
+}
+
+button.ghost:hover:not(:disabled),
+button.ghost:focus-visible {
+  color: var(--fg);
+  background: transparent;
+  box-shadow: none;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start::after, .start h1 { animation: none; }
+}
 
 /* --- stage --- */
 
@@ -129,17 +220,20 @@ kbd {
 /* --- links between the two versions --- */
 
 .crosslink {
-  display: inline-block;
-  margin-top: 1.5rem;
-  color: var(--muted);
+  color: var(--faint);
   font-family: var(--type);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   text-decoration: none;
-  border-bottom: 1px dotted currentColor;
+  padding: 0.4em 0.2em; /* tap target */
+  transition: color 0.2s, text-shadow 0.2s;
 }
 
 .crosslink:hover,
-.crosslink:focus-visible { color: var(--fg); outline: none; }
+.crosslink:focus-visible {
+  color: var(--fg);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+  outline: none;
+}
 
 /* --- "made of" question screen --- */
 
@@ -152,6 +246,7 @@ kbd {
   margin-left: 0.06em;
   vertical-align: -0.08em;
   background: currentColor;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   animation: blink 1s steps(1) infinite;
 }
 
@@ -165,33 +260,43 @@ kbd {
 
 .ask-form {
   display: flex;
-  gap: 12px;
-  align-items: stretch;
+  gap: 0.75rem;
+  align-items: flex-end;
   justify-content: center;
   flex-wrap: wrap;
+  width: 100%;
 }
 
+/* A bare line to write on, no box. */
 .answer {
-  flex: 1 1 14rem;
+  flex: 0 1 24rem;
   min-width: 0;
   min-height: 44px;
   font-family: var(--type);
-  font-size: 1.3rem;
+  font-size: clamp(1.3rem, 5vw, 1.7rem);
+  text-align: center;
   color: var(--fg);
   caret-color: var(--fg);
   background: transparent;
   border: none;
-  border-bottom: 2px solid var(--fg);
-  padding: 0.3em 0.1em;
+  border-bottom: 1px solid #3a3a3a;
   border-radius: 0;
+  padding: 0.25em 0.2em;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.3s;
 }
 
-.answer:focus { outline: none; border-bottom-color: #fff; }
+.answer:focus { border-bottom-color: #a8a8a8; }
 
 .ready-text {
   font-family: var(--type);
-  font-size: clamp(1.4rem, 6vw, 2.2rem);
-  margin: -0.5rem 0 1.5rem;
+  font-size: clamp(1.5rem, 6vw, 2.4rem);
+  color: var(--fg);
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.2);
+  margin: -1rem 0 2.25rem;
   overflow-wrap: anywhere;
 }
 
@@ -206,6 +311,8 @@ kbd {
 
 .offscreen {
   position: absolute;
+  top: 0;
+  left: 0; /* pinned, so it can't extend the page and add a scrollbar */
   width: 1px;
   height: 1px;
   opacity: 0;
