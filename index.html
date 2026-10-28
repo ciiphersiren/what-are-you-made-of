@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>are you human?</title>
+  <meta name="description" content="A webcam toy that asks if you're human, answers for you, and rewrites you as text. Runs entirely in your browser.">
+  <meta name="theme-color" content="#0b0b0b">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@700&family=Special+Elite&display=swap">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <main>
+    <section id="start" class="start">
+      <h1>are you human?</h1>
+      <button id="start-btn" class="primary" type="button">turn on camera</button>
+      <p class="note">everything runs on your device, no video is uploaded.</p>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="stage" class="stage" hidden>
+      <canvas id="view" aria-label="your camera, reinterpreted"></canvas>
+      <div class="controls">
+        <button id="btn-reject" type="button">not human</button>
+        <button id="btn-reset" type="button">reset</button>
+      </div>
+      <p class="keys">keys: <kbd>n</kbd> not human · <kbd>r</kbd> reset · <kbd>f</kbd> fps · <kbd>d</kbd> mask · <kbd>q</kbd> stop</p>
+    </section>
+  </main>
+
+  <!-- Camera source; frames are drawn (mirrored) into the canvas. Kept in the
+       DOM but invisible, since some mobile browsers stop decoding hidden video. -->
+  <video id="video" class="offscreen" playsinline muted autoplay></video>
+</body>
+</html>
