@@ -60,7 +60,7 @@ floating where your head was.
 ### [what are you made of?](https://ciiphersiren.github.io/are-you-human/made-of/)
 
 This one asks first. Type your answer (*stardust*, *guilt*, *my mother's
-hands*, *चाय*, *🌊*) and then become it. Any language, any script, emoji too.
+dreams*, *🌊*) and then become it. Any language, any script, emoji too.
 
 Every answer gets its own link, so you can send someone what you're made of:
 
