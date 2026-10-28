@@ -1,11 +1,15 @@
 // "are you human?" page: start screen and buttons. The app itself is in app.js.
 // Keys: q = stop camera, n = "not human", r = reset, f = toggle FPS, d = debug mask view
 
+import * as config from "./config.js";
 import { bindKeys, launch, LaunchError } from "./app.js";
+import { typeInto } from "./ui.js";
 
 const $ = (id) => document.getElementById(id);
 const els = {
   start: $("start"),
+  title: $("title"),
+  titleCursor: $("title-cursor"),
   startBtn: $("start-btn"),
   status: $("status"),
   stage: $("stage"),
@@ -25,6 +29,7 @@ function setStatus(message, isError = false) {
 function showStart(message = "", isError = false) {
   els.stage.hidden = true;
   els.start.hidden = false;
+  typeInto(els.title, config.QUESTION, { cursor: els.titleCursor });
   els.startBtn.disabled = false;
   els.startBtn.textContent = isError ? "try again" : "turn on camera";
   setStatus(message, isError);
@@ -52,3 +57,5 @@ els.startBtn.addEventListener("click", start);
 els.reject.addEventListener("click", () => app?.reject());
 els.reset.addEventListener("click", () => app?.resetAll());
 bindKeys(() => app, { stop, reset: () => app.resetAll() });
+
+showStart();
