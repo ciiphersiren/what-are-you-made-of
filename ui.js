@@ -264,3 +264,36 @@ export function drawLabelAbove(ctx, [fw, fh], [ax, ay], text, cursorIndex = null
     ctx.fillRect(cx, y1 + pad, config.CURSOR_WIDTH, height);
   }
 }
+
+// --- Typed page text ------------------------------------------------------------
+
+const typingTokens = new WeakMap(); // element -> token of its current animation
+
+/**
+ * Type `message` into `el` (textContent only, never HTML) with the app's
+ * typewriter. `cursor` is an element that stays solid while typing and blinks
+ * after (CSS .cursor). Starting a new animation on `el` cancels the old one.
+ */
+export function typeInto(el, message, { cursor = null } = {}) {
+  const token = {};
+  typingTokens.set(el, token);
+  const start = performance.now() / 1000;
+  const tw = new Typewriter("", message, start, {
+    startDelay: config.PAGE_TYPE_DELAY, type: config.PAGE_TYPE_INTERVAL, endHold: 0,
+  });
+  cursor?.classList.add("typing");
+  return new Promise((resolve) => {
+    const frame = () => {
+      if (typingTokens.get(el) !== token) return resolve(); // superseded
+      const now = performance.now() / 1000;
+      el.textContent = tw.at(now)[0];
+      if (tw.done(now)) {
+        cursor?.classList.remove("typing");
+        resolve();
+      } else {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+  });
+}
