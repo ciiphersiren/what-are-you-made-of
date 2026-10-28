@@ -98,7 +98,7 @@ Everything happens on your device, live, about 20 to 50 times a second.
   covering. When you choose *not human*, it paints that memory back over you.
   Anywhere it never got to see, it fills with a smear of the surroundings.
 - **Speaking any language.** Text is split into what you'd call characters
-  ("कि", "క్ష", "👩‍🚀"), not raw code points, so every script lands one
+  ("कि", "你", "👩‍🚀"), not raw code points, so every script lands one
   glyph per cell, each one measured and fitted so nothing overlaps.
 
 No server, no uploads, no analytics, no build step. It's a handful of
