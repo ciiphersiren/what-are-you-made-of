@@ -1,26 +1,37 @@
 // Letter renderer + LetterSource classes. Mirrors python/lettering.py.
 //
 // Grids are flat row-major arrays of length rows * cols. A mask grid is a
-// Uint8Array (1 = cell is drawn); a letter grid is an array of 1-char strings.
+// Uint8Array (1 = cell is drawn); a letter grid is an array of strings, one
+// grapheme each ("a", "कि", "👩‍🚀"), so any script or emoji gets one cell per
+// user-perceived character.
 
 import * as config from "./config.js";
 
 const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const LOWER = UPPER.toLowerCase();
 
+const segmenter = typeof Intl !== "undefined" && Intl.Segmenter
+  ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
+  : null;
+
+/** Split text into graphemes (falls back to code points without Intl.Segmenter). */
+export function graphemes(text) {
+  return segmenter ? Array.from(segmenter.segment(text), (s) => s.segment) : Array.from(text);
+}
+
 // --- Letter sources -----------------------------------------------------------
 
 /**
  * Decides which character goes in each grid cell.
- * Subclasses set `charset` (every character they may produce, used to build
- * the glyph atlas) and implement generate(). generate() is called every
+ * Subclasses set `charset` (every grapheme they may produce, as a string or
+ * an array; used to build the glyph atlas) and implement generate(). generate() is called every
  * frame; each source decides itself how often its letters actually change.
  * Spaces (and any character missing from the atlas) render as empty cells.
  */
 export class LetterSource {
   charset = "";
 
-  /** Return a flat (rows * cols) array of single characters. Cells outside `mask` are ignored. */
+  /** Return a flat (rows * cols) array of graphemes. Cells outside `mask` are ignored. */
   generate(rows, cols, mask) {
     throw new Error("not implemented");
   }
@@ -59,14 +70,14 @@ export class RandomLetterSource extends LetterSource {
  * Cells are read left to right, top to bottom, skipping cells outside the
  * mask, so the text flows unbroken through the body shape. Laid out fresh
  * every frame (the mask changes every frame). With scrollFrames > 0 the
- * phrase offset advances by one character every scrollFrames frames.
+ * phrase offset advances by one grapheme every scrollFrames frames.
  */
 export class PhraseLetterSource extends LetterSource {
   constructor(phrase = config.PHRASE, separator = config.PHRASE_SEPARATOR,
               scrollFrames = config.PHRASE_SCROLL_FRAMES) {
     super();
-    this.sequence = [...(phrase + separator)];
-    this.charset = [...new Set(this.sequence)].sort().join("");
+    this.sequence = graphemes(phrase + separator);
+    this.charset = [...new Set(this.sequence)];
     this.scrollFrames = scrollFrames;
     this.reset();
   }
@@ -102,14 +113,20 @@ export function makeLetterSource(name = config.LETTER_SOURCE) {
 // --- Glyph atlas --------------------------------------------------------------
 
 /**
- * Pre-rendered white glyphs in one row of an offscreen canvas, one tile per char.
- * Always includes A-Z and a-z on top of the source's charset. Index 0 is
- * blank (spaces, unknown chars). All glyphs share one baseline so mixed-case
- * text reads as a line. Tiles are rendered at `scale` x the cell size.
+ * Pre-rendered white glyphs in one row of an offscreen canvas, one tile per grapheme.
+ * Built from the source's charset, plus A-Z and a-z unless includeLatin is
+ * false. Index 0 is blank (spaces, unknown graphemes). Tiles are rendered at
+ * `scale` x the cell size.
+ *
+ * The font size is fitted to Latin letters, which share one baseline so
+ * mixed-case text reads as a line. Every glyph is measured: one that doesn't
+ * fit its tile on that baseline (emoji, wide or tall scripts) is scaled down
+ * and centered instead, and each tile is clipped so nothing overlaps.
  */
 export class GlyphAtlas {
-  constructor(charset, cellW, cellH, scale = 1) {
-    const drawable = new Set([...charset, ...UPPER, ...LOWER]);
+  constructor(charset, cellW, cellH, scale = 1, { includeLatin = true } = {}) {
+    const items = typeof charset === "string" ? graphemes(charset) : [...charset];
+    const drawable = new Set(includeLatin ? [...items, ...UPPER, ...LOWER] : items);
     this.chars = ["", ...[...drawable].filter((c) => c.trim()).sort()];
     this.index = new Map(this.chars.map((c, i) => [c, i]));
     this.tileW = cellW * scale;
@@ -120,21 +137,36 @@ export class GlyphAtlas {
     this.canvas.height = this.tileH;
     const ctx = this.canvas.getContext("2d");
     const pad = config.LETTER_GLYPH_PAD * scale;
-    const glyphs = this.chars.slice(1);
-    const { size, ascent, descent } =
-      fitFont(ctx, glyphs, this.tileW - 2 * pad, this.tileH - 2 * pad);
+    const maxW = this.tileW - 2 * pad, maxH = this.tileH - 2 * pad;
+    const { size, ascent, descent } = fitFont(ctx, maxW, maxH);
 
     ctx.font = letterFont(size);
     ctx.fillStyle = "#fff";
     ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";
-    // Shared baseline: center the union of all glyphs' ink bounds vertically.
+    // Shared baseline: center the union of the Latin glyphs' ink bounds vertically.
     const baseline = (this.tileH - (ascent + descent)) / 2 + ascent;
-    glyphs.forEach((c, i) => {
+    this.chars.slice(1).forEach((c, i) => {
+      const x0 = (i + 1) * this.tileW;
       const m = ctx.measureText(c);
-      const inkW = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
-      const x = (i + 1) * this.tileW + (this.tileW - inkW) / 2 + m.actualBoundingBoxLeft;
-      ctx.fillText(c, x, baseline);
+      const left = m.actualBoundingBoxLeft, inkW = left + m.actualBoundingBoxRight;
+      const up = m.actualBoundingBoxAscent, inkH = up + m.actualBoundingBoxDescent;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x0, 0, this.tileW, this.tileH);
+      ctx.clip();
+      const fitsOnBaseline = inkW <= maxW && baseline - up >= pad &&
+                             baseline + m.actualBoundingBoxDescent <= this.tileH - pad;
+      if (fitsOnBaseline) {
+        ctx.fillText(c, x0 + (this.tileW - inkW) / 2 + left, baseline);
+      } else {
+        // Shrink to fit (never enlarge) and center the ink box in the tile.
+        const k = Math.min(1, maxW / Math.max(inkW, 1e-3), maxH / Math.max(inkH, 1e-3));
+        ctx.translate(x0 + this.tileW / 2, this.tileH / 2);
+        ctx.scale(k, k);
+        ctx.fillText(c, -inkW / 2 + left, -inkH / 2 + up);
+      }
+      ctx.restore();
     });
   }
 
@@ -145,12 +177,13 @@ export class GlyphAtlas {
 
 const letterFont = (size) => `${config.LETTER_FONT_WEIGHT} ${size}px ${config.LETTER_FONT_FAMILY}`;
 
-/** Largest font size at which every glyph fits maxW x maxH on a shared baseline. */
-function fitFont(ctx, chars, maxW, maxH) {
+/** Largest font size at which every Latin letter fits maxW x maxH on a shared baseline. */
+function fitFont(ctx, maxW, maxH) {
+  const reference = [...UPPER, ...LOWER];
   const extent = (size) => {
     ctx.font = letterFont(size);
     let w = 0, ascent = 0, descent = 0;
-    for (const c of chars) {
+    for (const c of reference) {
       const m = ctx.measureText(c);
       w = Math.max(w, m.actualBoundingBoxLeft + m.actualBoundingBoxRight);
       ascent = Math.max(ascent, m.actualBoundingBoxAscent);
@@ -171,7 +204,7 @@ function fitFont(ctx, chars, maxW, maxH) {
 
 export class LetterRenderer {
   constructor(frameW, frameH, { source = makeLetterSource(), background = config.LETTER_BACKGROUND,
-                                scale = config.RENDER_SCALE } = {}) {
+                                scale = config.RENDER_SCALE, includeLatin = true } = {}) {
     this.source = source;
     this.background = background;
     this.frameW = frameW;
@@ -185,7 +218,7 @@ export class LetterRenderer {
     // The grid may not fill the frame exactly; center it.
     this.x0 = Math.floor((frameW - this.cols * this.cellW) / 2);
     this.y0 = Math.floor((frameH - this.rows * this.cellH) / 2);
-    this.atlas = new GlyphAtlas(source.charset, this.cellW, this.cellH, scale);
+    this.atlas = new GlyphAtlas(source.charset, this.cellW, this.cellH, scale, { includeLatin });
 
     const n = this.rows * this.cols;
     this.sums = new Float32Array(n);
