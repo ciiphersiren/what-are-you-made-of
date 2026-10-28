@@ -37,7 +37,7 @@ export const FACE_BOX_COLOR = "rgb(255, 255, 255)";
 export const FACE_BOX_THICKNESS = 2;
 
 // --- State machine (seconds) ---
-export const QUESTION_LINGER_SECONDS = 8.0; // question shown this long before "no" starts erasing
+export const QUESTION_LINGER_SECONDS = 7.0; // question shown this long before "no" starts erasing
 export const TYPE_START_DELAY = 0.4;        // cursor blinks in place before the first keystroke
 // Time in DETECTED; the typewriter's start delay makes up the rest of the linger.
 export const CONFIRM_SECONDS = QUESTION_LINGER_SECONDS - TYPE_START_DELAY;
@@ -108,12 +108,15 @@ export const LETTER_COLOR_GAIN = 1.3;   // brighten cell colors so dark clothes 
 export const LETTER_BACKGROUND = "dark"; // "dark" or "video" (dimmed video behind letters)
 export const LETTER_VIDEO_DIM = 0.35;
 
+// --- Typed start-screen text (both pages) ---
+export const PAGE_TYPE_DELAY = 0.15;    // pause before the first character (s)
+export const PAGE_TYPE_INTERVAL = 0.06; // per typed character (s)
+
 // --- "made of" version (made-of/) ---
 export const MADE_OF_QUESTION = "what are you made up of?";
 export const MADE_OF_EMPTY_REPLY = "hm. you have to be made of something.";
 export const MADE_OF_MAX_LENGTH = 60;       // in graphemes (user-perceived characters)
 export const MADE_OF_URL_PARAM = "text";    // made-of/?text=stardust skips the question
-export const MADE_OF_TYPE_INTERVAL = 0.06;  // prompt typing speed (s per character)
 
 // --- Ripple-in transition when entering LETTERED ---
 export const REVEAL_SECONDS = 0.8;
