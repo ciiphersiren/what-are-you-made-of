@@ -23,7 +23,7 @@ You sit down. A box finds your face.
 are you human?  yes  no
 ```
 
-It waits. Eight seconds is a long time to be looked at.
+It waits. Seven seconds is a long time to be looked at.
 
 Then, one keystroke at a time, it deletes **no** and types its answer for you:
 
