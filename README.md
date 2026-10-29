@@ -1,14 +1,13 @@
 <div align="center">
 
-# are you human?
+# what are you made of?
 
-**a webcam that asks you a question, then answers it for you.**
+**humans are made of words, not flesh. this is just a little mirror.**
 
-[**→ try it**](https://ciiphersiren.github.io/are-you-human/) &nbsp;·&nbsp;
-[**→ what are you made of?**](https://ciiphersiren.github.io/are-you-human/made-of/)
+[**→ try it**](https://ciiphersiren.github.io/are-you-human/)
 
 <!-- demo gif goes here:
-<img src="docs/demo.gif" alt="a face is boxed, 'are you human? yes no' appears, 'no' is deleted, and the body dissolves into the words 'its your fault'" width="640">
+<img src="docs/demo.gif" alt="someone types 'guilt', a box finds their face, 'are you human? yes no' appears, 'no' is deleted, and their body dissolves into the word 'guilt'" width="640">
 -->
 
 *runs entirely in your browser. no video ever leaves your device.*
@@ -17,13 +16,20 @@
 
 ---
 
-You sit down. A box finds your face.
+It asks you first.
+
+```
+what are you made up of?  ____________
+```
+
+You type something. *stardust.* *guilt.* *my mother's hands.* *चाय.* *🌊.*
+Then the camera turns on, and a box finds your face.
 
 ```
 are you human?  yes  no
 ```
 
-It waits. Seven seconds is a long time to be looked at.
+It waits. Eight seconds is a long time to be looked at.
 
 Then, one keystroke at a time, it deletes **no** and types its answer for you:
 
@@ -31,41 +37,38 @@ Then, one keystroke at a time, it deletes **no** and types its answer for you:
 are you human?  yes:(
 ```
 
-…and your body comes apart into text, rippling out from your face. Every
-part of you that the camera can see is rewritten as one sentence, repeated,
-flowing unbroken through the shape of you:
+…and your body comes apart into your own words, rippling out from your face.
+Every part of you the camera can see is rewritten as what you said you were,
+repeated, flowing unbroken through the shape of you:
 
 ```
-                 its your fau
-              lt its your fault
-             its your fault its
-          your fault its your fault
-       its your fault its your fault it
+                 guilt guilt
+              guilt guilt guilt
+             ilt guilt guilt gu
+          guilt guilt guilt guilt g
+       uilt guilt guilt guilt guilt gui
 ```
 
 The letters take their color from you: your skin, your shirt, the light on
-your face. Move, and the sentence moves with you.
+your face. Move, and the words move with you.
 
-## two ways in
+Can't think of anything? There's an example at the bottom of the page:
+*its your fault.*
 
-### [are you human?](https://ciiphersiren.github.io/are-you-human/)
+## refusing
 
-The original. It asks, it decides, and it's your fault.
-
-Disagree? Press **not human**. It deletes "yes" instead, and then
-you're gone. Not lettered, gone: every person in the frame fades out of
+Disagree with the machine? Press **not human**. It deletes "yes" instead, and
+then you're gone. Not rewritten, gone: every person in the frame fades out of
 the video, and the room behind them takes their place. The question stays,
 floating where your head was.
 
-### [what are you made of?](https://ciiphersiren.github.io/are-you-human/made-of/)
+## sending it to someone
 
-This one asks first. Type your answer (*stardust*, *guilt*, *my mother's
-dreams*, *🌊*) and then become it. Any language, any script, emoji too.
-
-Every answer gets its own link, so you can send someone what you're made of:
+Once you've turned into words, **share** copies a link with your answer in it.
+Whoever opens it skips the question and becomes what you are:
 
 ```
-ciiphersiren.github.io/are-you-human/made-of/?text=stardust
+ciiphersiren.github.io/are-you-human/?text=stardust
 ```
 
 ## controls
@@ -73,8 +76,8 @@ ciiphersiren.github.io/are-you-human/made-of/?text=stardust
 | | | |
 |:-:|---|---|
 | **n** | *not human* | refuse the answer, and disappear |
-| **r** | *reset* | start over (on *made of*: a new person, a new answer) |
-| | *share* | copy a link to your answer (*made of*) |
+| **r** | *reset* | back to the question, for the next person |
+| | *share* | copy a link to your answer |
 | **d** | | see what the machine sees: the body mask |
 | **f** | | frames per second |
 | **q** | | turn the camera off |
@@ -88,18 +91,18 @@ Everything happens on your device, live, about 20 to 50 times a second.
 - **Finding you.** Google's [MediaPipe](https://ai.google.dev/edge/mediapipe)
   runs two small neural networks in the browser via WebAssembly: one finds
   faces, the other draws an outline of every person in view.
-- **Becoming text.** The frame is cut into a grid of about 80 × 36 cells.
+- **Becoming words.** The frame is cut into a grid of about 80 × 36 cells.
   Any cell that's mostly *you* gets a character, read left to right, top to
-  bottom, skipping everything that isn't you, so the sentence flows through
+  bottom, skipping everything that isn't you, so your answer flows through
   your silhouette like water through a mold. Each glyph is pre-drawn once,
   then stamped and tinted on the GPU, thousands per frame.
+- **Any language.** Text is split into what you'd call characters ("कि",
+  "క్ష", "👩‍🚀"), not raw code points, so every script lands one glyph per
+  cell, each one measured and fitted so nothing overlaps.
 - **Disappearing.** While you sit there, the app quietly memorizes the room
-  behind you, pixel by pixel, from every part of the frame you're not
-  covering. When you choose *not human*, it paints that memory back over you.
-  Anywhere it never got to see, it fills with a smear of the surroundings.
-- **Speaking any language.** Text is split into what you'd call characters
-  ("कि", "你", "👩‍🚀"), not raw code points, so every script lands one
-  glyph per cell, each one measured and fitted so nothing overlaps.
+  behind you from every part of the frame you're not covering. When you
+  choose *not human*, it paints that memory back over you. Anywhere it never
+  got to see, it fills with a smear of the surroundings.
 
 No server, no uploads, no analytics, no build step. It's a handful of
 JavaScript files and a canvas.
@@ -115,12 +118,12 @@ python -m http.server 8000     # any static server works
 Then open <http://localhost:8000>. Cameras only work on `https://` or
 `localhost`, and modules don't load from `file://`, so a local server is needed.
 
-Want it to say something else? Everything is in [`config.js`](config.js):
-the sentence (`PHRASE`), how long it stares at you
-(`QUESTION_LINGER_SECONDS`), typing speed, grid size, colors, and more.
+Everything tunable is in [`config.js`](config.js): the question, the example
+answer (`PHRASE`), how long it stares at you (`QUESTION_LINGER_SECONDS`),
+typing speed, grid size, colors, and more.
 
-There's also the original desktop prototype in [`python/`](python/)
-(OpenCV + MediaPipe), kept for reference.
+The original desktop prototype (OpenCV + MediaPipe, "its your fault" only)
+is in [`python/`](python/), kept for reference.
 
 <div align="center">
 <br>
