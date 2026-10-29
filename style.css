@@ -291,6 +291,11 @@ kbd {
 
 .answer:focus { border-bottom-color: #a8a8a8; }
 
+.answer::placeholder { color: #3e3e3e; opacity: 1; }
+.answer:focus::placeholder { color: #2c2c2c; }
+
+.crosslink em { font-style: normal; color: var(--muted); }
+
 .ready-text {
   font-family: var(--type);
   font-size: clamp(1.5rem, 6vw, 2.4rem);
