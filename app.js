@@ -1,6 +1,6 @@
 // The shared app: main loop (camera -> models -> state machine -> drawing),
-// start-up (camera + models + fonts) and keyboard handling. Used by both
-// pages: ./main.js ("are you human?") and ./made-of/made-of.js.
+// start-up (camera + models + fonts) and keyboard handling. The page itself
+// (question screen, ?text= links, share) is wired up in ./main.js.
 // Mirrors python/main.py.
 
 import * as config from "./config.js";
