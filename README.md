@@ -4,7 +4,7 @@
 
 **humans are made of words, not flesh. this is just a little mirror.**
 
-[**→ try it**](https://ciiphersiren.github.io/are-you-human/)
+[**→ try it**](https://ciiphersiren.github.io/what-are-you-made-of/)
 
 <!-- demo gif goes here:
 <img src="docs/demo.gif" alt="someone types 'guilt', a box finds their face, 'are you human? yes no' appears, 'no' is deleted, and their body dissolves into the word 'guilt'" width="640">
@@ -67,7 +67,7 @@ Once you've turned into words, **share** copies a link with your answer in it.
 Whoever opens it skips the question and becomes what you are:
 
 ```
-ciiphersiren.github.io/are-you-human/?text=stardust
+ciiphersiren.github.io/what-are-you-made-of/?text=stardust
 ```
 
 ## controls
@@ -109,7 +109,7 @@ JavaScript files and a canvas.
 ## running it yourself
 
 ```sh
-git clone https://github.com/ciiphersiren/are-you-human.git
+git clone https://github.com/ciiphersiren/what-are-you-made-of.git
 cd are-you-human
 python -m http.server 8000     # any static server works
 ```
