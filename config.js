@@ -113,7 +113,7 @@ export const PAGE_TYPE_DELAY = 0.15;    // pause before the first character (s)
 export const PAGE_TYPE_INTERVAL = 0.06; // per typed character (s)
 
 // --- "made of" version (made-of/) ---
-export const MADE_OF_QUESTION = "what are you made up of?";
+export const MADE_OF_QUESTION = "what are you made of?";
 export const MADE_OF_EMPTY_REPLY = "hm. you have to be made of something.";
 export const MADE_OF_MAX_LENGTH = 60;       // in graphemes (user-perceived characters)
 export const MADE_OF_URL_PARAM = "text";    // made-of/?text=stardust skips the question
