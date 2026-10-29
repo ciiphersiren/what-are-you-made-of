@@ -2,61 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>what are you made of?</title>
-  <meta name="description" content="Type what you're made of, then watch yourself become it. A webcam toy that runs entirely in your browser.">
-  <meta name="theme-color" content="#0b0b0b">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@700&family=Special+Elite&display=swap">
-  <link rel="stylesheet" href="../style.css">
-  <script type="module" src="./made-of.js"></script>
+  <!-- Moved to the site root. Keep old links (incl. ?text=...) working. -->
+  <script>location.replace("../" + location.search + location.hash);</script>
+  <meta http-equiv="refresh" content="0; url=../">
 </head>
-<body>
-  <main>
-    <!-- Question screen: the answer becomes the letters. -->
-    <section id="ask" class="start">
-      <div class="start-main">
-        <h1 class="typed"><span id="ask-question"></span><span id="ask-cursor" class="cursor" aria-hidden="true"></span></h1>
-        <form id="ask-form" class="ask-form" autocomplete="off">
-          <label for="answer" class="visually-hidden">what are you made up of?</label>
-          <input id="answer" class="answer" type="text" maxlength="240" enterkeyhint="go"
-                 spellcheck="false" autocapitalize="off" autocorrect="off">
-          <button id="go-btn" class="ghost" type="submit">go</button>
-        </form>
-        <p id="ask-status" class="status" role="status" aria-live="polite"></p>
-      </div>
-      <footer class="start-footer">
-        <p class="note">everything runs on your device, no video is uploaded.</p>
-        <a class="crosslink" href="../">← are you human?</a>
-      </footer>
-    </section>
-
-    <!-- Shown instead when the text comes from a shared link (?text=...). -->
-    <section id="ready" class="start" hidden>
-      <div class="start-main">
-        <h1>you're made of</h1>
-        <p id="ready-text" class="ready-text"></p>
-        <button id="ready-btn" class="primary" type="button">turn on camera</button>
-        <p id="ready-status" class="status" role="status" aria-live="polite"></p>
-      </div>
-      <footer class="start-footer">
-        <p class="note">everything runs on your device, no video is uploaded.</p>
-        <a class="crosslink" href="./">type your own</a>
-      </footer>
-    </section>
-
-    <section id="stage" class="stage" hidden>
-      <canvas id="view" aria-label="your camera, reinterpreted"></canvas>
-      <div class="controls">
-        <button id="btn-reject" type="button">not human</button>
-        <button id="btn-reset" type="button">reset</button>
-        <button id="btn-share" type="button" hidden>share</button>
-      </div>
-      <p class="keys">keys: <kbd>n</kbd> not human · <kbd>r</kbd> new answer · <kbd>f</kbd> fps · <kbd>d</kbd> mask · <kbd>q</kbd> stop</p>
-    </section>
-  </main>
-
-  <video id="video" class="offscreen" playsinline muted autoplay></video>
-</body>
+<body><a href="../">what are you made of? →</a></body>
 </html>
