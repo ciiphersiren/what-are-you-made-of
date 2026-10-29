@@ -110,7 +110,7 @@ JavaScript files and a canvas.
 
 ```sh
 git clone https://github.com/ciiphersiren/what-are-you-made-of.git
-cd are-you-human
+cd what-are-you-made-of
 python -m http.server 8000     # any static server works
 ```
 
