@@ -22,14 +22,14 @@ It asks you first.
 what are you made up of?  ____________
 ```
 
-You type something. *stardust.* *guilt.* *my mother's hands.* *चाय.* *🌊.*
+You type something. *stardust.* *guilt.* *my mother's dreams.* *您的姓名.* *🌊.*
 Then the camera turns on, and a box finds your face.
 
 ```
 are you human?  yes  no
 ```
 
-It waits. Eight seconds is a long time to be looked at.
+It waits. Seven seconds is a long time to be looked at.
 
 Then, one keystroke at a time, it deletes **no** and types its answer for you:
 
@@ -58,8 +58,7 @@ Can't think of anything? There's an example at the bottom of the page:
 ## refusing
 
 Disagree with the machine? Press **not human**. It deletes "yes" instead, and
-then you're gone. Not rewritten, gone: every person in the frame fades out of
-the video, and the room behind them takes their place. The question stays,
+then you're gone. You fade out of the frame, and the room behind you takes your place. The question stays,
 floating where your head was.
 
 ## sending it to someone
@@ -97,7 +96,7 @@ Everything happens on your device, live, about 20 to 50 times a second.
   your silhouette like water through a mold. Each glyph is pre-drawn once,
   then stamped and tinted on the GPU, thousands per frame.
 - **Any language.** Text is split into what you'd call characters ("कि",
-  "క్ష", "👩‍🚀"), not raw code points, so every script lands one glyph per
+  "爱", "👩‍🚀"), not raw code points, so every script lands one glyph per
   cell, each one measured and fitted so nothing overlaps.
 - **Disappearing.** While you sit there, the app quietly memorizes the room
   behind you from every part of the frame you're not covering. When you
