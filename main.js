@@ -30,6 +30,7 @@ const els = {
   reject: $("btn-reject"),
   reset: $("btn-reset"),
   share: $("btn-share"),
+  controls: document.querySelector("#stage .controls"),
 };
 
 let app = null;
@@ -99,7 +100,11 @@ async function start(statusEl) {
       video: els.video,
       letters: { source: new PhraseLetterSource(text), includeLatin: false },
       text,
-      onStateChange: (state) => { els.share.hidden = state !== State.LETTERED; },
+      onStateChange: (state) => {
+        els.share.hidden = state !== State.LETTERED;
+        // Nothing to press while the question waits for its own answer.
+        els.controls.classList.toggle("judging", state === State.DETECTED || state === State.CONFIRMING);
+      },
       status: (m) => setStatus(statusEl, m),
     });
   } catch (err) {
